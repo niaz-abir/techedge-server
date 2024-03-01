@@ -9,12 +9,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware
-app.use(
-  cors({
-    origin: "https://l2-b2-assignment-6-fronten-niaz-abir.vercel.app",
-    methods: ["POST"],
-  })
-);
+app.use(cors());
 // app.use(cors(Credential:true));
 app.use(express.json());
 
