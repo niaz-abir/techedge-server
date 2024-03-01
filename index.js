@@ -12,6 +12,7 @@ const port = process.env.PORT || 5000;
 app.use(
   cors({
     origin: "https://l2-b2-assignment-6-fronten-niaz-abir.vercel.app",
+    methods: ["POST"],
   })
 );
 // app.use(cors(Credential:true));
