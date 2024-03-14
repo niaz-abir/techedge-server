@@ -29,6 +29,10 @@ async function run() {
     const db = client.db("assignment");
     const collection = db.collection("users");
     const donation = db.collection("donation");
+    const testimonial = db.collection("testimonial");
+    const volunteer = db.collection("volunteer");
+    const leaderBoard = db.collection("leaderBoard");
+    const feedback = db.collection("feedback");
 
     // User Registration
     app.post("/api/v1/register", async (req, res) => {
@@ -81,6 +85,56 @@ async function run() {
         message: "Login successful",
         token,
       });
+    });
+
+    // add testimonial
+    app.get("/api/v1/testimonial", async (req, res) => {
+      const query = {};
+      const result = await testimonial.find(query).toArray();
+      res.send(result);
+    });
+
+    app.post("/api/v1/create-testimonial", async (req, res) => {
+      const newTestimonial = req.body;
+      const response = await testimonial.insertOne(newTestimonial);
+      res.send(response);
+    });
+    // add volunteer
+    app.get("/api/v1/volunteer", async (req, res) => {
+      const query = {};
+      const result = await volunteer.find(query).toArray();
+      res.send(result);
+    });
+
+    app.post("/api/v1/create-volunteer", async (req, res) => {
+      const newVolunteer = req.body;
+      const response = await volunteer.insertOne(newVolunteer);
+      res.send(response);
+    });
+    // show leader board data
+    app.get("/api/v1/leader-board", async (req, res) => {
+      const query = {};
+      const result = await leaderBoard
+        .find(query)
+        .sort({ amount: -1 })
+        .toArray();
+      result.forEach((entry) => {
+        entry.amount = parseInt(entry.amount);
+      });
+      res.send(result);
+    });
+    // feedback section
+
+    app.get("/api/v1/feedback", async (req, res) => {
+      const query = {};
+      const result = await feedback.find(query).toArray();
+      res.send(result);
+    });
+
+    app.post("/api/v1/create-feedback", async (req, res) => {
+      const newFeedback = req.body;
+      const response = await feedback.insertOne(newFeedback);
+      res.send(response);
     });
 
     app.get("/api/v1/donation", async (req, res) => {
