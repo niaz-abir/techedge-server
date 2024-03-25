@@ -85,7 +85,7 @@ async function run() {
       });
     });
 
-    // add flash-sale
+    // get flash-sale data
     app.get("/api/v1/flash-sale", async (req, res) => {
       const query = {};
       const result = await flashSale.find(query).toArray();
