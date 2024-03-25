@@ -26,13 +26,11 @@ async function run() {
     await client.connect();
     console.log("Connected to MongoDB");
 
-    const db = client.db("assignment");
+    const db = client.db("techEdge");
     const collection = db.collection("users");
-    const donation = db.collection("donation");
-    const testimonial = db.collection("testimonial");
-    const volunteer = db.collection("volunteer");
-    const leaderBoard = db.collection("leaderBoard");
-    const feedback = db.collection("feedback");
+    const flashSale = db.collection("flashSale");
+    const products = db.collection("products");
+    const reverie = db.collection("reverie");
 
     // User Registration
     app.post("/api/v1/register", async (req, res) => {
@@ -87,96 +85,55 @@ async function run() {
       });
     });
 
-    // add testimonial
-    app.get("/api/v1/testimonial", async (req, res) => {
+    // add flash-sale
+    app.get("/api/v1/flash-sale", async (req, res) => {
       const query = {};
-      const result = await testimonial.find(query).toArray();
+      const result = await flashSale.find(query).toArray();
+
+      res.send(result);
+    });
+    app.get("/api/v1/all-products", async (req, res) => {
+      const query = {};
+      const result = await products.find(query).toArray();
+
       res.send(result);
     });
 
-    app.post("/api/v1/create-testimonial", async (req, res) => {
-      const newTestimonial = req.body;
-      const response = await testimonial.insertOne(newTestimonial);
-      res.send(response);
-    });
-    // add volunteer
-    app.get("/api/v1/volunteer", async (req, res) => {
-      const query = {};
-      const result = await volunteer.find(query).toArray();
-      res.send(result);
-    });
-
-    app.post("/api/v1/create-volunteer", async (req, res) => {
-      const newVolunteer = req.body;
-      const response = await volunteer.insertOne(newVolunteer);
-      res.send(response);
-    });
-    // show leader board data
-    app.get("/api/v1/leader-board", async (req, res) => {
-      const query = {};
-      const result = await leaderBoard
-        .find(query)
-        .sort({ amount: -1 })
-        .toArray();
-      result.forEach((entry) => {
-        entry.amount = parseInt(entry.amount);
-      });
-      res.send(result);
-    });
-    // feedback section
-
-    app.get("/api/v1/feedback", async (req, res) => {
-      const query = {};
-      const result = await feedback.find(query).toArray();
-      res.send(result);
-    });
-
-    app.post("/api/v1/create-feedback", async (req, res) => {
-      const newFeedback = req.body;
-      const response = await feedback.insertOne(newFeedback);
-      res.send(response);
-    });
-
-    app.get("/api/v1/donation", async (req, res) => {
-      const query = {};
-      const result = await donation.find(query).toArray();
-      res.send(result);
-    });
-    app.get("/api/v1/donation/:id", async (req, res) => {
+    app.get("/api/v1/all-products/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const result = await donation.findOne(query);
+      const result = await products.findOne(query);
       res.send(result);
     });
 
-    app.post("/api/v1/create-donation", async (req, res) => {
-      const newDonation = req.body;
-      const response = await donation.insertOne(newDonation);
-      res.send(response);
+    app.get("/api/v1/all-products/:brand", async (req, res) => {
+      const brand = req.params.brand.toLowerCase();
+      console.log(brand);
+      try {
+        const filteredProducts = products.filter(
+          (product) => product.brands.toLowerCase() === brand
+        );
+        res.json(filteredProducts);
+      } catch (error) {
+        console.log(error);
+      }
     });
 
-    app.delete("/api/v1/delete-donation/:id", async (req, res) => {
-      const id = req.params.id;
-      const response = await donation.deleteOne({ _id: new ObjectId(id) });
-      console.log(response);
-      res.send(response);
-    });
-
-    app.put("/api/v1/update-donation/:id", async (req, res) => {
-      const id = req.params.id;
-      const updatedDonation = req.body;
-      const query = { _id: new ObjectId(id) };
-      const last = await donation.findOne(query);
-      console.log(last);
-
-      const updateDoc = {
-        $set: updatedDonation,
-      };
-      const result = await donation.updateOne(query, updateDoc);
+    app.get("/api/v1/reverie", async (req, res) => {
+      const query = {};
+      const result = await reverie.find(query).toArray();
       res.send(result);
+    });
+
+    app.post("/api/v1/create-reverie", async (req, res) => {
+      const newReverie = req.body;
+      console.log(newReverie);
+      const response = await reverie.insertOne(newReverie);
+      res.send(response);
     });
 
     // Start the server
+
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
